@@ -2,30 +2,25 @@ import QueueManager from "./components/QueueManager";
 import Queue from "./components/Queue";
 import Item from "./components/Item";
 
-const manager: QueueManager = new QueueManager();
+const firstQueue: Queue = QueueManager.establish(2, "First Queue", "This is the first Queue"); // Creates the queue
 
-manager.establish(2, "First Queue", "This is the first Queue"); // Creates the queue
-const firstQueue: Queue | null = manager.findOne({ name: "First Queue" }); // Find the queue based off of the set name
+// You can also find queues later with their details.
+QueueManager.establish(1, "Second Queue", "This is a second queue description");
+const secondQueue: Queue | null = QueueManager.findOne({ name: "Second Queue", description: "This is a second queue description" });
+secondQueue?.add(new Item("Test item", 0, console.log("Example of second queue")));
 
-
+function exampleFunction() {
+    console.log("Items can also take callbacks");
+}
 
 // Functions getting sent to the queue by weight
-const secondfunction = new Item("two", 1, () => {
-    console.log("This is an example of the queue getting sorted by weight")
-}, "This is the description of the itema", firstQueue);
+firstQueue.add(new Item("First Item", 0, console.log("Items can take voids")));
+firstQueue.add(new Item("Second Item", 1, exampleFunction()));
 
-const firstfunction = new Item("one", 0, () => {
-    console.log("This is a queued callback")
-}, "This is the description of the item", firstQueue);
+console.log(firstQueue.toString());
+console.log(secondQueue?.toString());
 
-
-
-if (firstQueue !== null) {
+setTimeout(() => {
     console.log(firstQueue.toString());
-
-    setTimeout(() => {
-        console.log(firstQueue!.toString());
-    }, 5000);
-} else {
-    console.log("Queue not found");
-}
+    console.log(secondQueue?.toString());
+}, 5000);
